@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: "pip install -e ."
-    startCommand: "python -m warehouse serve"
+    startCommand: "warehouse serve"
     envVars:
       - key: HOST
         value: 0.0.0.0
