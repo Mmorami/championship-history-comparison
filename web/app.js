@@ -132,6 +132,8 @@ function renderCustomComparison() {
   const tbody = document.querySelector("#custom-comparison tbody");
   tbody.innerHTML = "";
 
+  document.getElementById("comparison-count").textContent = customComparison.length;
+
   customComparison.forEach((row, idx) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -164,10 +166,13 @@ async function loadTeamContext(teamId) {
   const res = await fetch(`/api/team/${teamId}/context`);
   const data = await res.json();
 
+  const drawer = document.getElementById("context-drawer");
   const managersDiv = document.getElementById("context-managers");
   const scorersDiv = document.getElementById("context-scorers");
   const hint = document.getElementById("context-hint");
+
   if (hint) hint.style.display = "none";
+  drawer.classList.add("open");
 
   const managers = data.managers || [];
   if (!managers.length) {
@@ -266,6 +271,33 @@ document.getElementById("add-custom").addEventListener("click", () => {
 document.getElementById("clear-custom").addEventListener("click", () => {
   customComparison = [];
   renderCustomComparison();
+});
+
+// Layout Interactions
+document.querySelectorAll(".nav-item").forEach(item => {
+  item.addEventListener("click", () => {
+    document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
+    item.classList.add("active");
+
+    const targetId = item.getAttribute("data-target");
+    document.querySelectorAll(".view-section").forEach(view => {
+      view.style.display = view.id === targetId ? "block" : "none";
+    });
+
+    document.getElementById("view-title").textContent = item.textContent === "Dashboard" ? "Promotion Power Leaderboard" : "Season Explorer";
+  });
+});
+
+document.getElementById("close-drawer").addEventListener("click", () => {
+  document.getElementById("context-drawer").classList.remove("open");
+});
+
+document.getElementById("toggle-comparison").addEventListener("click", () => {
+  document.getElementById("comparison-tray-overlay").classList.remove("hidden");
+});
+
+document.getElementById("close-comparison").addEventListener("click", () => {
+  document.getElementById("comparison-tray-overlay").classList.add("hidden");
 });
 
 loadLeaderboard();
