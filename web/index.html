@@ -36,7 +36,7 @@
         </div>
         <div class="header-controls">
           <label class="switch-label">
-            <span>Show %</span>
+            <span>Switch to per match data</span>
             <input type="checkbox" id="toggle-leaderboard-norm">
             <span class="slider"></span>
           </label>
@@ -57,9 +57,10 @@
                 <th data-key="wins">W</th>
                 <th data-key="draws">D</th>
                 <th data-key="losses">L</th>
-                <th data-key="goals_for">+/-</th>
+                <th data-key="goals_for">GF</th>
+                <th data-key="goals_against">GA</th>
                 <th data-key="goal_diff">GD</th>
-                <th data-key="points">Pts</th>
+                <th data-key="points" id="header-leaderboard-pts">Pts</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -79,7 +80,7 @@
             </select>
             <button id="load-season">Load</button>
             <label class="switch-label">
-              <span>Show %</span>
+              <span>Switch to per match data</span>
               <input type="checkbox" id="toggle-season-norm">
               <span class="slider"></span>
             </label>
@@ -93,9 +94,10 @@
                 <th>W</th>
                 <th>D</th>
                 <th>L</th>
-                <th>+/-</th>
+                <th>GF</th>
+                <th>GA</th>
                 <th>GD</th>
-                <th>Pts</th>
+                <th id="header-season-pts">Pts</th>
                 <th>Add</th>
               </tr>
             </thead>
@@ -134,7 +136,7 @@
         <button id="add-custom">Add</button>
         <button id="clear-custom" class="danger">Clear All</button>
         <label class="switch-label">
-          <span>Show %</span>
+          <span>Switch to per match data</span>
           <input type="checkbox" id="toggle-comparison-norm">
           <span class="slider"></span>
         </label>
@@ -150,9 +152,10 @@
               <th>W</th>
               <th>D</th>
               <th>L</th>
-              <th>+/-</th>
+              <th>GF</th>
+              <th>GA</th>
               <th>GD</th>
-              <th>Pts</th>
+              <th id="header-comparison-pts">Pts</th>
               <th>Action</th>
             </tr>
           </thead>

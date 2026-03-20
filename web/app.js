@@ -8,9 +8,9 @@ let seasonNorm = false;
 let comparisonNorm = false;
 
 function getNormVal(val, pl, type) {
-  if (!pl) return "0.0";
+  if (!pl) return "0.000";
   if (type === 'pct') return (val / pl * 100).toFixed(1) + '%';
-  if (type === 'pts_pct') return (val / (pl * 3) * 100).toFixed(1) + '%';
+  if (type === 'ppg') return (val / pl).toFixed(3);
   if (type === 'rate') return (val / pl).toFixed(2);
   return val;
 }
@@ -67,15 +67,9 @@ function renderLeaderboard() {
 
       if (key === "rank") {
         td.textContent = leaderboardData.indexOf(row) + 1;
-      } else if (key === "goals_for") {
-        if (leaderboardNorm) {
-          td.textContent = `${(row.goals_for / row.played).toFixed(2)}-${(row.goals_against / row.played).toFixed(2)}`;
-        } else {
-          td.textContent = `${row.goals_for}-${row.goals_against}`;
-        }
-      } else if (leaderboardNorm && ["wins", "draws", "losses", "goal_diff", "points"].includes(key)) {
-        if (key === "points") td.textContent = getNormVal(row[key], row.played, 'pts_pct');
-        else if (key === "goal_diff") td.textContent = getNormVal(row[key], row.played, 'rate');
+      } else if (leaderboardNorm && ["wins", "draws", "losses", "goals_for", "goals_against", "goal_diff", "points"].includes(key)) {
+        if (key === "points") td.textContent = getNormVal(row[key], row.played, 'ppg');
+        else if (["goals_for", "goals_against", "goal_diff"].includes(key)) td.textContent = getNormVal(row[key], row.played, 'rate');
         else td.textContent = getNormVal(row[key], row.played, 'pct');
       } else {
         td.textContent = row[key] ?? "";
@@ -84,6 +78,8 @@ function renderLeaderboard() {
     });
     tbody.appendChild(tr);
   });
+
+  document.getElementById("header-leaderboard-pts").textContent = leaderboardNorm ? "PPG" : "Pts";
 
   // Update header classes
   headers.forEach(th => {
@@ -160,9 +156,6 @@ function renderCustomComparison() {
     const pl = row.played;
 
     const display = (val, type) => comparisonNorm ? getNormVal(val, pl, type) : val;
-    const goalsDisplay = comparisonNorm
-      ? `${(row.goals_for / pl).toFixed(2)}-${(row.goals_against / pl).toFixed(2)}`
-      : `${row.goals_for}-${row.goals_against}`;
 
     tr.innerHTML = `
       <td>${row.season_id}</td>
@@ -172,13 +165,16 @@ function renderCustomComparison() {
       <td>${display(row.wins, 'pct')}</td>
       <td>${display(row.draws, 'pct')}</td>
       <td>${display(row.losses, 'pct')}</td>
-      <td>${goalsDisplay}</td>
+      <td>${display(row.goals_for, 'rate')}</td>
+      <td>${display(row.goals_against, 'rate')}</td>
       <td>${display(row.goal_diff, 'rate')}</td>
-      <td>${display(row.points, 'pts_pct')}</td>
+      <td>${display(row.points, 'ppg')}</td>
       <td><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
     `;
     tbody.appendChild(tr);
   });
+
+  document.getElementById("header-comparison-pts").textContent = comparisonNorm ? "PPG" : "Pts";
 }
 
 window.removeFromCustomComparison = function (idx) {
@@ -266,12 +262,6 @@ async function loadSeasonCompare() {
           addToCustomComparison(row);
         });
         td.appendChild(btn);
-      } else if (text === "+/-") {
-        if (seasonNorm) {
-          td.textContent = `${(row.goals_for / row.played).toFixed(2)}-${(row.goals_against / row.played).toFixed(2)}`;
-        } else {
-          td.textContent = `${row.goals_for}-${row.goals_against}`;
-        }
       } else {
         const map = {
           pos: "position",
@@ -280,15 +270,17 @@ async function loadSeasonCompare() {
           w: "wins",
           d: "draws",
           l: "losses",
+          gf: "goals_for",
+          ga: "goals_against",
           pts: "points",
           gd: "goal_diff",
         };
         const key = map[text] || text;
         let val = row[key] ?? "";
 
-        if (seasonNorm && ["wins", "draws", "losses", "goal_diff", "points"].includes(key)) {
-          if (key === "points") val = getNormVal(val, row.played, 'pts_pct');
-          else if (key === "goal_diff") val = getNormVal(val, row.played, 'rate');
+        if (seasonNorm && ["wins", "draws", "losses", "goals_for", "goals_against", "goal_diff", "points"].includes(key)) {
+          if (key === "points") val = getNormVal(val, row.played, 'ppg');
+          else if (["goals_for", "goals_against", "goal_diff"].includes(key)) val = getNormVal(val, row.played, 'rate');
           else val = getNormVal(val, row.played, 'pct');
         }
         td.textContent = val;
@@ -297,6 +289,8 @@ async function loadSeasonCompare() {
     });
     tbody.appendChild(tr);
   });
+
+  document.getElementById("header-season-pts").textContent = seasonNorm ? "PPG" : "Pts";
 }
 
 document.getElementById("load-season").addEventListener("click", loadSeasonCompare);
