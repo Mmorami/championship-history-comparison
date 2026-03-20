@@ -1,0 +1,281 @@
+{
+  "requested_seasons": [
+    "1992-93",
+    "1993-94",
+    "1994-95",
+    "1995-96",
+    "1996-97",
+    "1997-98",
+    "1998-99",
+    "1999-00",
+    "2000-01",
+    "2001-02",
+    "2002-03",
+    "2003-04",
+    "2004-05",
+    "2005-06",
+    "2006-07",
+    "2007-08",
+    "2008-09",
+    "2009-10",
+    "2010-11",
+    "2011-12",
+    "2012-13",
+    "2013-14",
+    "2014-15",
+    "2015-16",
+    "2016-17",
+    "2017-18",
+    "2018-19",
+    "2019-20",
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "loaded_seasons": [
+    "1992-93",
+    "1993-94",
+    "1994-95",
+    "1995-96",
+    "1996-97",
+    "1997-98",
+    "1998-99",
+    "1999-00",
+    "2000-01",
+    "2001-02",
+    "2002-03",
+    "2003-04",
+    "2004-05",
+    "2005-06",
+    "2006-07",
+    "2007-08",
+    "2008-09",
+    "2009-10",
+    "2010-11",
+    "2011-12",
+    "2012-13",
+    "2013-14",
+    "2014-15",
+    "2015-16",
+    "2016-17",
+    "2017-18",
+    "2018-19",
+    "2019-20",
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "missing_seasons": [],
+  "coverage": [
+    {
+      "season_id": "1992-93",
+      "teams_loaded": 24,
+      "min_grade": "B",
+      "max_grade": "B"
+    },
+    {
+      "season_id": "1993-94",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "1994-95",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "1995-96",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "1996-97",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "1997-98",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "1998-99",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "1999-00",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2000-01",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2001-02",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2002-03",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2003-04",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2004-05",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2005-06",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2006-07",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2007-08",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2008-09",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2009-10",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2010-11",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2011-12",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2012-13",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2013-14",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2014-15",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2015-16",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2016-17",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2017-18",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2018-19",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2019-20",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2020-21",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2021-22",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2022-23",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2023-24",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2024-25",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    },
+    {
+      "season_id": "2025-26",
+      "teams_loaded": 24,
+      "min_grade": "A",
+      "max_grade": "A"
+    }
+  ]
+}

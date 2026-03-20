@@ -1,0 +1,3 @@
+season_id,team_name,player_name,appearances,goals,assists,is_team_top_scorer,source_confidence,assists_coverage_complete_for_season
+2023-24,Leicester City,Jamie Vardy,35,18,2,1,A,1
+2022-23,Burnley,Nathan Tella,43,5,9,0,B,0

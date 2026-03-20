@@ -1,0 +1,143 @@
+{
+  "seasons": [
+    "1992-93",
+    "1993-94",
+    "1994-95",
+    "1995-96",
+    "1996-97",
+    "1997-98",
+    "1998-99",
+    "1999-00",
+    "2000-01",
+    "2001-02",
+    "2002-03",
+    "2003-04",
+    "2004-05",
+    "2005-06",
+    "2006-07",
+    "2007-08",
+    "2008-09",
+    "2009-10",
+    "2010-11",
+    "2011-12",
+    "2012-13",
+    "2013-14",
+    "2014-15",
+    "2015-16",
+    "2016-17",
+    "2017-18",
+    "2018-19",
+    "2019-20",
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "source_presence_by_season": {
+    "1992-93": {
+      "wikipedia": 1
+    },
+    "1993-94": {
+      "football_data": 1
+    },
+    "1994-95": {
+      "football_data": 1
+    },
+    "1995-96": {
+      "football_data": 1
+    },
+    "1996-97": {
+      "football_data": 1
+    },
+    "1997-98": {
+      "football_data": 1
+    },
+    "1998-99": {
+      "football_data": 1
+    },
+    "1999-00": {
+      "football_data": 1
+    },
+    "2000-01": {
+      "football_data": 1
+    },
+    "2001-02": {
+      "football_data": 1
+    },
+    "2002-03": {
+      "football_data": 1
+    },
+    "2003-04": {
+      "football_data": 1
+    },
+    "2004-05": {
+      "football_data": 1
+    },
+    "2005-06": {
+      "football_data": 1
+    },
+    "2006-07": {
+      "football_data": 1
+    },
+    "2007-08": {
+      "football_data": 1
+    },
+    "2008-09": {
+      "football_data": 1
+    },
+    "2009-10": {
+      "football_data": 1
+    },
+    "2010-11": {
+      "football_data": 1
+    },
+    "2011-12": {
+      "football_data": 1
+    },
+    "2012-13": {
+      "football_data": 1
+    },
+    "2013-14": {
+      "football_data": 1
+    },
+    "2014-15": {
+      "football_data": 1
+    },
+    "2015-16": {
+      "football_data": 1
+    },
+    "2016-17": {
+      "football_data": 1
+    },
+    "2017-18": {
+      "football_data": 1
+    },
+    "2018-19": {
+      "football_data": 1
+    },
+    "2019-20": {
+      "football_data": 1
+    },
+    "2020-21": {
+      "football_data": 1
+    },
+    "2021-22": {
+      "football_data": 1
+    },
+    "2022-23": {
+      "football_data": 1
+    },
+    "2023-24": {
+      "football_data": 1
+    },
+    "2024-25": {
+      "football_data": 1
+    },
+    "2025-26": {
+      "football_data": 1
+    }
+  },
+  "notes": "Primary reconciliation tracks source presence and lineage completeness for each season."
+}

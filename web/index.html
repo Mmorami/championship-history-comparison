@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Championship History Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+  <main>
+    <h1>Championship History Dashboard</h1>
+    <p id="meta"></p>
+
+    <section>
+      <h2>Promotion Power Leaderboard</h2>
+      <table id="leaderboard">
+        <thead>
+          <tr>
+            <th data-key="rank">Rank</th>
+            <th data-key="season_id">Season</th>
+            <th data-key="team_name_canonical">Team</th>
+            <th data-key="position">Pos</th>
+            <th data-key="played">P</th>
+            <th data-key="points">Pts</th>
+            <th data-key="ppg">PPG</th>
+            <th data-key="goals_for">GF</th>
+            <th data-key="goals_against">GA</th>
+            <th data-key="goal_diff">GD</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Season Comparator</h2>
+      <label for="season">Season:</label>
+      <select id="season"></select>
+      <label for="slice">Slice:</label>
+      <select id="slice">
+        <option value="all">All</option>
+        <option value="top6">Top 6</option>
+        <option value="promoted">Promoted</option>
+      </select>
+      <button id="load-season">Load</button>
+      <table id="season-table">
+        <thead>
+          <tr>
+            <th>Pos</th>
+            <th>Team</th>
+            <th>P</th>
+            <th>Pts</th>
+            <th>GF</th>
+            <th>GA</th>
+            <th>GD</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Team Context</h2>
+      <p id="context-hint">Select a team row above to see managers and top scorers.</p>
+      <div id="context-managers"></div>
+      <div id="context-scorers"></div>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+
+</html>

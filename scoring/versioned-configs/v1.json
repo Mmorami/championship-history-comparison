@@ -1,0 +1,20 @@
+{
+  "performance": {
+    "ppg": 0.5,
+    "finish_percentile": 0.3,
+    "gd_per_game": 0.2
+  },
+  "outcomes": {
+    "auto": 0.7,
+    "playoff": 0.3
+  },
+  "consistency": {
+    "top6_total": 0.7,
+    "playoff_conversion": 0.3
+  },
+  "overall": {
+    "performance": 0.6,
+    "outcomes": 0.25,
+    "consistency": 0.15
+  }
+}
