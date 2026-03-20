@@ -34,6 +34,13 @@
           <h1 id="view-title">Promotion Power Leaderboard</h1>
           <p id="meta"></p>
         </div>
+        <div class="header-controls">
+          <label class="switch-label">
+            <span>Show %</span>
+            <input type="checkbox" id="toggle-leaderboard-norm">
+            <span class="slider"></span>
+          </label>
+        </div>
       </header>
 
       <div class="views-container">
@@ -71,6 +78,11 @@
               <option value="promoted">Promoted</option>
             </select>
             <button id="load-season">Load</button>
+            <label class="switch-label">
+              <span>Show %</span>
+              <input type="checkbox" id="toggle-season-norm">
+              <span class="slider"></span>
+            </label>
           </div>
           <table id="season-table">
             <thead>
@@ -121,6 +133,11 @@
         <select id="custom-team"></select>
         <button id="add-custom">Add</button>
         <button id="clear-custom" class="danger">Clear All</button>
+        <label class="switch-label">
+          <span>Show %</span>
+          <input type="checkbox" id="toggle-comparison-norm">
+          <span class="slider"></span>
+        </label>
       </div>
       <div class="table-container">
         <table id="custom-comparison">
