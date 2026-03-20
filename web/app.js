@@ -54,8 +54,8 @@ function renderLeaderboard() {
 
       if (key === "rank") {
         td.textContent = leaderboardData.indexOf(row) + 1;
-      } else if (key === "ppg") {
-        td.textContent = Number(row[key] || 0).toFixed(3);
+      } else if (key === "goals_for") {
+        td.textContent = `${row.goals_for}-${row.goals_against}`;
       } else {
         td.textContent = row[key] ?? "";
       }
@@ -132,6 +132,8 @@ function renderCustomComparison() {
   const tbody = document.querySelector("#custom-comparison tbody");
   tbody.innerHTML = "";
 
+  document.getElementById("comparison-count").textContent = customComparison.length;
+
   customComparison.forEach((row, idx) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
@@ -142,10 +144,9 @@ function renderCustomComparison() {
       <td>${row.wins}</td>
       <td>${row.draws}</td>
       <td>${row.losses}</td>
-      <td>${row.points}</td>
-      <td>${row.goals_for}</td>
-      <td>${row.goals_against}</td>
+      <td>${row.goals_for}-${row.goals_against}</td>
       <td>${row.goal_diff}</td>
+      <td>${row.points}</td>
       <td><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
     `;
     tbody.appendChild(tr);
@@ -164,10 +165,13 @@ async function loadTeamContext(teamId) {
   const res = await fetch(`/api/team/${teamId}/context`);
   const data = await res.json();
 
+  const drawer = document.getElementById("context-drawer");
   const managersDiv = document.getElementById("context-managers");
   const scorersDiv = document.getElementById("context-scorers");
   const hint = document.getElementById("context-hint");
+
   if (hint) hint.style.display = "none";
+  drawer.classList.add("open");
 
   const managers = data.managers || [];
   if (!managers.length) {
@@ -234,17 +238,17 @@ async function loadSeasonCompare() {
           addToCustomComparison(row);
         });
         td.appendChild(btn);
+      } else if (text === "+/-") {
+        td.textContent = `${row.goals_for}-${row.goals_against}`;
       } else {
         const map = {
           pos: "position",
           team: "team_name_canonical",
-          p: "played",
+          pl: "played",
           w: "wins",
           d: "draws",
           l: "losses",
           pts: "points",
-          gf: "goals_for",
-          ga: "goals_against",
           gd: "goal_diff",
         };
         const key = map[text] || text;
@@ -266,6 +270,33 @@ document.getElementById("add-custom").addEventListener("click", () => {
 document.getElementById("clear-custom").addEventListener("click", () => {
   customComparison = [];
   renderCustomComparison();
+});
+
+// Layout Interactions
+document.querySelectorAll(".nav-item").forEach(item => {
+  item.addEventListener("click", () => {
+    document.querySelectorAll(".nav-item").forEach(nav => nav.classList.remove("active"));
+    item.classList.add("active");
+
+    const targetId = item.getAttribute("data-target");
+    document.querySelectorAll(".view-section").forEach(view => {
+      view.style.display = view.id === targetId ? "block" : "none";
+    });
+
+    document.getElementById("view-title").textContent = item.textContent === "Dashboard" ? "Promotion Power Leaderboard" : "Season Explorer";
+  });
+});
+
+document.getElementById("close-drawer").addEventListener("click", () => {
+  document.getElementById("context-drawer").classList.remove("open");
+});
+
+document.getElementById("toggle-comparison").addEventListener("click", () => {
+  document.getElementById("comparison-tray-overlay").classList.remove("hidden");
+});
+
+document.getElementById("close-comparison").addEventListener("click", () => {
+  document.getElementById("comparison-tray-overlay").classList.add("hidden");
 });
 
 loadLeaderboard();

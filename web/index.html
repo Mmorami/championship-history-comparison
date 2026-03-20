@@ -9,103 +9,142 @@
 </head>
 
 <body>
-  <main>
-    <h1>Championship History Dashboard</h1>
-    <p id="meta"></p>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="brand">
+        <span class="brand-icon">C-H</span>
+        <span class="brand-text">CHAMPIONSHIP HISTORY</span>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item active" data-target="view-leaderboard">Dashboard</li>
+        <li class="nav-item" data-target="view-season">Season Explorer</li>
+      </ul>
+      <div class="sidebar-bottom">
+        <button id="toggle-comparison" class="btn-comparison">
+          Comparison Bench (<span id="comparison-count">0</span>)
+        </button>
+      </div>
+    </nav>
 
-    <section>
-      <h2>Promotion Power Leaderboard</h2>
-      <table id="leaderboard">
-        <thead>
-          <tr>
-            <th data-key="rank">Rank</th>
-            <th data-key="season_id">Season</th>
-            <th data-key="team_name_canonical">Team</th>
-            <th data-key="position">Pos</th>
-            <th data-key="played">P</th>
-            <th data-key="wins">W</th>
-            <th data-key="draws">D</th>
-            <th data-key="losses">L</th>
-            <th data-key="points">Pts</th>
-            <th data-key="ppg">PPG</th>
-            <th data-key="goals_for">GF</th>
-            <th data-key="goals_against">GA</th>
-            <th data-key="goal_diff">GD</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="sticky-header">
+        <div class="header-titles">
+          <h1 id="view-title">Promotion Power Leaderboard</h1>
+          <p id="meta"></p>
+        </div>
+      </header>
 
-    <section>
-      <h2>Season Comparator</h2>
-      <label for="season">Season:</label>
-      <select id="season"></select>
-      <label for="slice">Slice:</label>
-      <select id="slice">
-        <option value="all">All</option>
-        <option value="top6">Top 6</option>
-        <option value="promoted">Promoted</option>
-      </select>
-      <button id="load-season">Load</button>
-      <table id="season-table">
-        <thead>
-          <tr>
-            <th>Pos</th>
-            <th>Team</th>
-            <th>P</th>
-            <th>W</th>
-            <th>D</th>
-            <th>L</th>
-            <th>Pts</th>
-            <th>GF</th>
-            <th>GA</th>
-            <th>GD</th>
-            <th>Add</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+      <div class="views-container">
+        <!-- View 1: Leaderboard -->
+        <div id="view-leaderboard" class="view-section active">
+          <table id="leaderboard">
+            <thead>
+              <tr>
+                <th data-key="rank">#</th>
+                <th data-key="season_id">Season</th>
+                <th data-key="team_name_canonical">Team</th>
+                <th data-key="position">Pos</th>
+                <th data-key="played">Pl</th>
+                <th data-key="wins">W</th>
+                <th data-key="draws">D</th>
+                <th data-key="losses">L</th>
+                <th data-key="goals_for">+/-</th>
+                <th data-key="goal_diff">GD</th>
+                <th data-key="points">Pts</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
 
-    <section>
-      <h2>Custom Comparison</h2>
-      <div class="controls">
+        <!-- View 2: Season Comparator -->
+        <div id="view-season" class="view-section" style="display: none;">
+          <div class="controls season-controls">
+            <label for="season">Season:</label>
+            <select id="season"></select>
+            <label for="slice">Slice:</label>
+            <select id="slice">
+              <option value="all">All</option>
+              <option value="top6">Top 6</option>
+              <option value="promoted">Promoted</option>
+            </select>
+            <button id="load-season">Load</button>
+          </div>
+          <table id="season-table">
+            <thead>
+              <tr>
+                <th>Pos</th>
+                <th>Team</th>
+                <th>Pl</th>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>+/-</th>
+                <th>GD</th>
+                <th>Pts</th>
+                <th>Add</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Context Drawer (Right Panel) -->
+    <aside id="context-drawer" class="context-drawer">
+      <div class="drawer-header">
+        <h2>Match Context & History</h2>
+        <button id="close-drawer" class="close-btn">&times;</button>
+      </div>
+      <div class="drawer-content">
+        <p id="context-hint">Select a team row to see details.</p>
+        <div id="context-managers"></div>
+        <div id="context-scorers"></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Comparison Tray (Overlay) -->
+  <div id="comparison-tray-overlay" class="comparison-tray-overlay hidden">
+    <div class="comparison-modal">
+      <div class="modal-header">
+        <h2>Custom Comparison Bench</h2>
+        <button id="close-comparison" class="close-btn">&times;</button>
+      </div>
+      <div class="controls comparison-controls">
         <label for="custom-season">Season:</label>
         <select id="custom-season"></select>
         <label for="custom-team">Team:</label>
         <select id="custom-team"></select>
-        <button id="add-custom">Add to View</button>
+        <button id="add-custom">Add</button>
         <button id="clear-custom" class="danger">Clear All</button>
       </div>
-      <table id="custom-comparison">
-        <thead>
-          <tr>
-            <th>Season</th>
-            <th>Team</th>
-            <th>Pos</th>
-            <th>P</th>
-            <th>W</th>
-            <th>D</th>
-            <th>L</th>
-            <th>Pts</th>
-            <th>GF</th>
-            <th>GA</th>
-            <th>GD</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+      <div class="table-container">
+        <table id="custom-comparison">
+          <thead>
+            <tr>
+              <th>Season</th>
+              <th>Team</th>
+              <th>Pos</th>
+              <th>Pl</th>
+              <th>W</th>
+              <th>D</th>
+              <th>L</th>
+              <th>+/-</th>
+              <th>GD</th>
+              <th>Pts</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-    <section>
-      <h2>Team Context</h2>
-      <p id="context-hint">Select a team row above to see managers and top scorers.</p>
-      <div id="context-managers"></div>
-      <div id="context-scorers"></div>
-    </section>
-  </main>
   <script src="/app.js"></script>
 </body>
 
