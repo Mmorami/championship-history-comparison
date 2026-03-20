@@ -1,5 +1,6 @@
 let leaderboardData = [];
 let leaderboardSort = { key: "overall_score", dir: -1 }; // Default score descending
+let customComparison = [];
 
 async function loadLeaderboard() {
   const res = await fetch("/api/leaderboard");
@@ -74,21 +75,87 @@ function renderLeaderboard() {
 
 async function populateSeasonsDropdown() {
   const select = document.getElementById("season");
+  const customSelect = document.getElementById("custom-season");
   select.innerHTML = "";
+  customSelect.innerHTML = "";
   const res = await fetch("/api/seasons");
   const data = await res.json();
   const seasons = data.rows || [];
+
   seasons.forEach((sid) => {
     const opt = document.createElement("option");
     opt.value = sid;
     opt.textContent = sid;
     select.appendChild(opt);
+
+    const optCustom = opt.cloneNode(true);
+    customSelect.appendChild(optCustom);
   });
-  // Default to the latest season.
+
   if (seasons.length > 0) {
     select.value = seasons[seasons.length - 1];
+    customSelect.value = seasons[seasons.length - 1];
+    updateCustomTeamDropdown();
   }
 }
+
+async function updateCustomTeamDropdown() {
+  const seasonId = document.getElementById("custom-season").value;
+  const select = document.getElementById("custom-team");
+  if (!seasonId) return;
+  select.innerHTML = '<option value="">Loading...</option>';
+
+  const res = await fetch(`/api/season/${seasonId}/compare?slice=all`);
+  const data = await res.json();
+  const rows = data.rows || [];
+
+  rows.sort((a, b) => a.team_name_canonical.localeCompare(b.team_name_canonical));
+
+  select.innerHTML = "";
+  rows.forEach(row => {
+    const opt = document.createElement("option");
+    opt.value = JSON.stringify(row);
+    opt.textContent = row.team_name_canonical;
+    select.appendChild(opt);
+  });
+}
+
+function addToCustomComparison(teamData) {
+  const exists = customComparison.some(c => c.season_id === teamData.season_id && c.team_id === teamData.team_id);
+  if (exists) return;
+
+  customComparison.push(teamData);
+  renderCustomComparison();
+}
+
+function renderCustomComparison() {
+  const tbody = document.querySelector("#custom-comparison tbody");
+  tbody.innerHTML = "";
+
+  customComparison.forEach((row, idx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${row.season_id}</td>
+      <td>${row.team_name_canonical}</td>
+      <td>${row.position}</td>
+      <td>${row.played}</td>
+      <td>${row.wins}</td>
+      <td>${row.draws}</td>
+      <td>${row.losses}</td>
+      <td>${row.points}</td>
+      <td>${row.goals_for}</td>
+      <td>${row.goals_against}</td>
+      <td>${row.goal_diff}</td>
+      <td><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+window.removeFromCustomComparison = function (idx) {
+  customComparison.splice(idx, 1);
+  renderCustomComparison();
+};
 
 async function loadTeamContext(teamId) {
   if (!teamId) return;
@@ -151,27 +218,38 @@ async function loadSeasonCompare() {
   data.rows.forEach((row) => {
     const tr = document.createElement("tr");
     tr.style.cursor = "pointer";
-    tr.addEventListener("click", () => loadTeamContext(row.team_id));
+    tr.addEventListener("click", (e) => {
+      if (e.target.tagName !== "BUTTON") loadTeamContext(row.team_id);
+    });
 
     headers.forEach((th) => {
       const td = document.createElement("td");
-      // Map header text to key if no data-key is present, or just use a mapping.
-      // For season-table, we'll use header index or text-based mapping.
       const text = th.textContent.toLowerCase();
-      const map = {
-        pos: "position",
-        team: "team_name_canonical",
-        p: "played",
-        w: "wins",
-        d: "draws",
-        l: "losses",
-        pts: "points",
-        gf: "goals_for",
-        ga: "goals_against",
-        gd: "goal_diff",
-      };
-      const key = map[text] || text;
-      td.textContent = row[key] ?? "";
+      if (text === "add") {
+        const btn = document.createElement("button");
+        btn.textContent = "+";
+        btn.className = "add-btn";
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          addToCustomComparison(row);
+        });
+        td.appendChild(btn);
+      } else {
+        const map = {
+          pos: "position",
+          team: "team_name_canonical",
+          p: "played",
+          w: "wins",
+          d: "draws",
+          l: "losses",
+          pts: "points",
+          gf: "goals_for",
+          ga: "goals_against",
+          gd: "goal_diff",
+        };
+        const key = map[text] || text;
+        td.textContent = row[key] ?? "";
+      }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -179,6 +257,16 @@ async function loadSeasonCompare() {
 }
 
 document.getElementById("load-season").addEventListener("click", loadSeasonCompare);
+document.getElementById("custom-season").addEventListener("change", updateCustomTeamDropdown);
+document.getElementById("add-custom").addEventListener("click", () => {
+  const select = document.getElementById("custom-team");
+  if (!select.value) return;
+  addToCustomComparison(JSON.parse(select.value));
+});
+document.getElementById("clear-custom").addEventListener("click", () => {
+  customComparison = [];
+  renderCustomComparison();
+});
 
 loadLeaderboard();
 populateSeasonsDropdown().then(loadSeasonCompare);
