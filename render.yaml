@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: championship-history-warehouse
+    runtime: python
+    buildCommand: "pip install -e ."
+    startCommand: "python -m warehouse serve"
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        fromPort: 8080

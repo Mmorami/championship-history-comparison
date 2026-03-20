@@ -13,6 +13,25 @@ from season `1992-93` to `2025-26` (current unfinished season).
 - Analytical views and API-ready JSON builders.
 - Operations scripts for scheduled refresh and run versioning.
 
+## Deployment
+
+This project is designed for **zero-conversion free deployment** on platforms like Render or Railway.
+
+### Strategy: Bundled SQLite
+Because the database is small (~500KB), it is included in the Git repository. This allows you to deploy to "stateless" free tiers (like Render Free) without needing a separate database server or persistent volumes.
+
+### Deploy to Render
+1. Push your code to GitHub.
+2. Sign in to [Render](https://render.com).
+3. Click **New +** -> **Blueprint**.
+4. Select this repository. Render will automatically detect the `render.yaml` and set up the service.
+
+### Deploy to Railway
+1. Push your code to GitHub.
+2. Connect your repo to [Railway](https://railway.app).
+3. Set the **Start Command** to `python -m warehouse serve`.
+4. Railway will automatically inject the `PORT` variable.
+
 ## Quick start
 
 1. Create a Python 3.11+ environment.

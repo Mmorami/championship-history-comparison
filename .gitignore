@@ -32,7 +32,7 @@ env.bak/
 venv.bak/
 
 # Data and SQLite
-data/*.db
+# data/*.db  <-- Un-ignored so it can be bundled for zero-conversion deployment
 data/*.db-journal
 data/raw/
 data/processed/

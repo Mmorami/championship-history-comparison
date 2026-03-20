@@ -131,7 +131,13 @@ def main() -> None:
         print(f"Wrote reconciliation summary: {recon}")
         return
     if args.command == "serve":
-        serve(settings.db_path, host=args.host, port=args.port)
+        import os
+        host = os.environ.get("HOST", args.host)
+        if host == "127.0.0.1" and "PORT" in os.environ:
+            # If we're in a cloud env (PORT is set), default to 0.0.0.0 if still 127.0.0.1
+            host = "0.0.0.0"
+        port = int(os.environ.get("PORT", args.port))
+        serve(settings.db_path, host=host, port=port)
         return
     if args.command == "import-managers":
         csv_path = Path(args.csv)
