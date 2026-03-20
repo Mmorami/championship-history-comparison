@@ -54,8 +54,8 @@ function renderLeaderboard() {
 
       if (key === "rank") {
         td.textContent = leaderboardData.indexOf(row) + 1;
-      } else if (key === "ppg") {
-        td.textContent = Number(row[key] || 0).toFixed(3);
+      } else if (key === "goals_for") {
+        td.textContent = `${row.goals_for}-${row.goals_against}`;
       } else {
         td.textContent = row[key] ?? "";
       }
@@ -144,10 +144,9 @@ function renderCustomComparison() {
       <td>${row.wins}</td>
       <td>${row.draws}</td>
       <td>${row.losses}</td>
-      <td>${row.points}</td>
-      <td>${row.goals_for}</td>
-      <td>${row.goals_against}</td>
+      <td>${row.goals_for}-${row.goals_against}</td>
       <td>${row.goal_diff}</td>
+      <td>${row.points}</td>
       <td><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
     `;
     tbody.appendChild(tr);
@@ -239,17 +238,17 @@ async function loadSeasonCompare() {
           addToCustomComparison(row);
         });
         td.appendChild(btn);
+      } else if (text === "+/-") {
+        td.textContent = `${row.goals_for}-${row.goals_against}`;
       } else {
         const map = {
           pos: "position",
           team: "team_name_canonical",
-          p: "played",
+          pl: "played",
           w: "wins",
           d: "draws",
           l: "losses",
           pts: "points",
-          gf: "goals_for",
-          ga: "goals_against",
           gd: "goal_diff",
         };
         const key = map[text] || text;
