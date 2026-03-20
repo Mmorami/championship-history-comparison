@@ -145,20 +145,35 @@ async function loadSeasonCompare() {
   const res = await fetch(`/api/season/${season}/compare?slice=${slice}`);
   const data = await res.json();
   const tbody = document.querySelector("#season-table tbody");
+  const headers = Array.from(document.querySelectorAll("#season-table thead th"));
   tbody.innerHTML = "";
+
   data.rows.forEach((row) => {
     const tr = document.createElement("tr");
     tr.style.cursor = "pointer";
-    tr.innerHTML = `
-      <td>${row.position}</td>
-      <td>${row.team_name_canonical}</td>
-      <td>${row.played}</td>
-      <td>${row.points}</td>
-      <td>${row.goals_for}</td>
-      <td>${row.goals_against}</td>
-      <td>${row.goal_diff}</td>
-    `;
     tr.addEventListener("click", () => loadTeamContext(row.team_id));
+
+    headers.forEach((th) => {
+      const td = document.createElement("td");
+      // Map header text to key if no data-key is present, or just use a mapping.
+      // For season-table, we'll use header index or text-based mapping.
+      const text = th.textContent.toLowerCase();
+      const map = {
+        pos: "position",
+        team: "team_name_canonical",
+        p: "played",
+        w: "wins",
+        d: "draws",
+        l: "losses",
+        pts: "points",
+        gf: "goals_for",
+        ga: "goals_against",
+        gd: "goal_diff",
+      };
+      const key = map[text] || text;
+      td.textContent = row[key] ?? "";
+      tr.appendChild(td);
+    });
     tbody.appendChild(tr);
   });
 }
