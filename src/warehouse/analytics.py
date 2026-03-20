@@ -36,6 +36,9 @@ def build_views(conn: sqlite3.Connection) -> None:
             s.team_id,
             s.position,
             s.played,
+            s.wins,
+            s.draws,
+            s.losses,
             s.points,
             s.ppg,
             s.goals_for,
@@ -87,9 +90,9 @@ def run_ranking_snapshot(conn: sqlite3.Connection, scoring_version: str) -> str:
             """
             INSERT INTO team_ranking_snapshot(
                 run_id, season_id, team_id, overall_score, performance_score, outcomes_score, consistency_score,
-                position, played, points, ppg, goals_for, goals_against, goal_diff, finish_percentile,
+                position, played, wins, draws, losses, points, ppg, goals_for, goals_against, goal_diff, finish_percentile,
                 promoted_auto, promoted_playoff
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             """,
             (
                 run_id,
@@ -101,6 +104,9 @@ def run_ranking_snapshot(conn: sqlite3.Connection, scoring_version: str) -> str:
                 consistency,
                 row["position"],
                 row["played"],
+                row["wins"],
+                row["draws"],
+                row["losses"],
                 row["points"],
                 row["ppg"],
                 row["goals_for"],
