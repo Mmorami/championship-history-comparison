@@ -221,7 +221,8 @@ Here is the current database schema:
 {schema_sql}
 ```
 The user will provide a metric description. You must generate a SQLite SELECT query that computes this metric.
-The query MUST return identifier columns (e.g., `team_id` and/or `season_id`) and a computed column named EXACTLY `value`.
+CRITICAL: The final SELECT MUST return exactly three columns: `season_id`, `team_id`, and a computed column named EXACTLY `value`.
+When calculating streak-based metrics using the `matches` table, you must unify `home_team_id` and `away_team_id` into a single `team_id` column in a CTE, and ensure you also select `season_id` so it is available for grouping. Order by `date`.
 You must return only a valid JSON response matching this exact structure, with no formatting outside the JSON:
 {{
   "name": "Short, human-readable column name",

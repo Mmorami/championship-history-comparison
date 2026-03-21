@@ -175,35 +175,52 @@ function addToCustomComparison(teamData) {
 }
 
 function renderCustomComparison() {
-  const tbody = document.querySelector("#custom-comparison tbody");
-  tbody.innerHTML = "";
+  const finishRender = (augmentedData) => {
+    const tbody = document.querySelector("#custom-comparison tbody");
+    const headers = Array.from(document.querySelectorAll("#custom-comparison thead th"));
+    tbody.innerHTML = "";
 
-  document.getElementById("comparison-count").textContent = customComparison.length;
+    document.getElementById("comparison-count").textContent = augmentedData.length;
 
-  customComparison.forEach((row, idx) => {
-    const tr = document.createElement("tr");
-    const pl = row.played;
+    augmentedData.forEach((row, idx) => {
+      const tr = document.createElement("tr");
+      const pl = row.played;
+      const display = (val, type) => comparisonNorm ? getNormVal(val, pl, type) : val;
 
-    const display = (val, type) => comparisonNorm ? getNormVal(val, pl, type) : val;
+      headers.forEach(th => {
+        const td = document.createElement("td");
+        const key = th.getAttribute("data-key");
+        if (!key) return;
+        
+        td.setAttribute("data-col", key);
+        
+        if (key === "action") {
+          td.innerHTML = `<button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button>`;
+        } else if (key === "points") {
+          td.textContent = display(row.points, 'ppg');
+        } else if (["wins", "draws", "losses"].includes(key)) {
+          td.textContent = display(row[key], 'pct');
+        } else if (["goals_for", "goals_against", "goal_diff"].includes(key)) {
+          td.textContent = display(row[key], 'rate');
+        } else {
+          td.textContent = row[key] ?? "";
+        }
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
 
-    tr.innerHTML = `
-      <td data-col="season_id">${row.season_id}</td>
-      <td data-col="team_name_canonical">${row.team_name_canonical}</td>
-      <td data-col="position">${row.position}</td>
-      <td data-col="played">${pl}</td>
-      <td data-col="wins">${display(row.wins, 'pct')}</td>
-      <td data-col="draws">${display(row.draws, 'pct')}</td>
-      <td data-col="losses">${display(row.losses, 'pct')}</td>
-      <td data-col="goals_for">${display(row.goals_for, 'rate')}</td>
-      <td data-col="goals_against">${display(row.goals_against, 'rate')}</td>
-      <td data-col="goal_diff">${display(row.goal_diff, 'rate')}</td>
-      <td data-col="points">${display(row.points, 'ppg')}</td>
-      <td data-col="action"><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
+    document.getElementById("header-comparison-pts").textContent = comparisonNorm ? "PPG" : "Pts";
+  };
 
-  document.getElementById("header-comparison-pts").textContent = comparisonNorm ? "PPG" : "Pts";
+  if (window.ColumnInjector) {
+    window.ColumnInjector.applyToTable("custom-comparison", customComparison, () => {
+      window.ColumnInjector.renderToggleUI("injector-toggle-comparison", "custom-comparison", renderCustomComparison);
+      finishRender(customComparison);
+    });
+  } else {
+    finishRender(customComparison);
+  }
 }
 
 window.removeFromCustomComparison = function (idx) {
@@ -285,8 +302,10 @@ async function loadSeasonCompare() {
 
     headers.forEach((th) => {
       const td = document.createElement("td");
+      const dataCol = th.getAttribute("data-col");
       const text = th.textContent.toLowerCase();
-      if (text === "add") {
+      
+      if (dataCol === "add") {
         td.setAttribute("data-col", "add");
         const btn = document.createElement("button");
         btn.textContent = "+";
@@ -309,7 +328,8 @@ async function loadSeasonCompare() {
           pts: "points",
           gd: "goal_diff",
         };
-        const key = map[text] || text;
+        const dataKey = th.getAttribute("data-key");
+        const key = dataKey || map[text] || text;
         td.setAttribute("data-col", key);
         let val = row[key] ?? "";
 
@@ -392,32 +412,40 @@ document.getElementById("toggle-comparison-norm").addEventListener("change", (e)
   renderCustomComparison();
 });
 
-// Column Visibility Logic
-const btnColVis = document.getElementById("btn-col-visibility");
-const colDropdown = document.getElementById("col-dropdown");
-
-if (btnColVis && colDropdown) {
-  btnColVis.addEventListener("click", () => {
-    colDropdown.classList.toggle("hidden");
-  });
-
-  document.addEventListener("click", (e) => {
-    if (!btnColVis.contains(e.target) && !colDropdown.contains(e.target)) {
-      colDropdown.classList.add("hidden");
-    }
-  });
-
-  colDropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-    checkbox.addEventListener("change", (e) => {
-      const colKey = e.target.value;
-      if (e.target.checked) {
-        document.body.classList.remove(`hide-${colKey}`);
-      } else {
-        document.body.classList.add(`hide-${colKey}`);
+// Gear Menu Logic
+document.querySelectorAll(".gear-menu-container").forEach(container => {
+  const btn = container.querySelector(".btn-icon");
+  const dropdown = container.querySelector(".gear-dropdown");
+  
+  if (btn && dropdown) {
+    btn.addEventListener("click", () => {
+      // close others
+      document.querySelectorAll(".gear-dropdown").forEach(d => {
+        if (d !== dropdown) d.classList.add("hidden");
+      });
+      dropdown.classList.toggle("hidden");
+    });
+    
+    document.addEventListener("click", (e) => {
+      if (!container.contains(e.target)) {
+        dropdown.classList.add("hidden");
       }
     });
+  }
+});
+
+// Column Visibility Logic
+const colListControls = document.querySelectorAll("#col-dropdown input[type='checkbox']");
+colListControls.forEach(checkbox => {
+  checkbox.addEventListener("change", (e) => {
+    const colKey = e.target.value;
+    if (e.target.checked) {
+      document.body.classList.remove(`hide-${colKey}`);
+    } else {
+      document.body.classList.add(`hide-${colKey}`);
+    }
   });
-}
+});
 
 loadLeaderboard();
 populateSeasonsDropdown().then(loadSeasonCompare);

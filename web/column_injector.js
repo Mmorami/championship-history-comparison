@@ -86,17 +86,10 @@ window.ColumnInjector = {
     container.innerHTML = "";
     
     const cols = this.getColumns();
-    if (cols.length === 0) return;
-    
-    const wrapper = document.createElement("div");
-    wrapper.className = "col-visibility-container injector-toggle";
-    
-    const btn = document.createElement("button");
-    btn.className = "btn-outline";
-    btn.innerHTML = `Custom Columns ▾`;
-    
-    const dropdown = document.createElement("div");
-    dropdown.className = "col-dropdown hidden";
+    if (cols.length === 0) {
+      container.innerHTML = `<span style="color:var(--text-secondary);font-size:0.85rem;">No custom columns.</span>`;
+      return;
+    }
     
     cols.forEach(col => {
       const isApplied = col.appliedTo && col.appliedTo.includes(tableId);
@@ -121,21 +114,7 @@ window.ColumnInjector = {
       
       label.appendChild(checkbox);
       label.append(` ${col.name}`);
-      dropdown.appendChild(label);
+      container.appendChild(label);
     });
-    
-    btn.addEventListener("click", () => {
-      dropdown.classList.toggle("hidden");
-    });
-    
-    document.addEventListener("click", (e) => {
-      if (!btn.contains(e.target) && !dropdown.contains(e.target)) {
-        dropdown.classList.add("hidden");
-      }
-    });
-    
-    wrapper.appendChild(btn);
-    wrapper.appendChild(dropdown);
-    container.appendChild(wrapper);
   }
 };

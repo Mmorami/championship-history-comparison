@@ -35,32 +35,43 @@
           <h1 id="view-title">Promotion Power Leaderboard</h1>
           <p id="meta"></p>
         </div>
-        <div class="header-controls">
-          <div id="injector-toggle-leaderboard"></div>
-          <div class="col-visibility-container">
-            <button id="btn-col-visibility" class="btn-outline">Columns ▾</button>
-            <div id="col-dropdown" class="col-dropdown hidden">
-              <label><input type="checkbox" value="played" checked> Played (Pl)</label>
-              <label><input type="checkbox" value="wins" checked> Wins (W)</label>
-              <label><input type="checkbox" value="draws" checked> Draws (D)</label>
-              <label><input type="checkbox" value="losses" checked> Losses (L)</label>
-              <label><input type="checkbox" value="goals_for" checked> Goals For (GF)</label>
-              <label><input type="checkbox" value="goals_against" checked> Goals Against (GA)</label>
-              <label><input type="checkbox" value="goal_diff" checked> Goal Diff (GD)</label>
-              <label><input type="checkbox" value="points" checked> Points (Pts)</label>
-            </div>
-          </div>
-          <label class="switch-label">
-            <span>Switch to per match data</span>
-            <input type="checkbox" id="toggle-leaderboard-norm">
-            <span class="slider"></span>
-          </label>
-        </div>
       </header>
 
       <div class="views-container">
         <!-- View 1: Leaderboard -->
         <div id="view-leaderboard" class="view-section active">
+          <div class="controls leaderboard-controls" style="justify-content: flex-end;">
+            <div class="gear-menu-container">
+              <button class="btn-icon" id="btn-gear-leaderboard">⚙️</button>
+              <div class="gear-dropdown hidden" id="gear-dropdown-leaderboard">
+                <div class="dropdown-section">
+                  <h4>Data View</h4>
+                  <label class="switch-label">
+                    <span>Per match data</span>
+                    <input type="checkbox" id="toggle-leaderboard-norm">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="dropdown-section">
+                  <h4>Standard Columns</h4>
+                  <div class="col-list" id="col-dropdown">
+                    <label><input type="checkbox" value="played" checked> Played (Pl)</label>
+                    <label><input type="checkbox" value="wins" checked> Wins (W)</label>
+                    <label><input type="checkbox" value="draws" checked> Draws (D)</label>
+                    <label><input type="checkbox" value="losses" checked> Losses (L)</label>
+                    <label><input type="checkbox" value="goals_for" checked> Goals For (GF)</label>
+                    <label><input type="checkbox" value="goals_against" checked> Goals Against (GA)</label>
+                    <label><input type="checkbox" value="goal_diff" checked> Goal Diff (GD)</label>
+                    <label><input type="checkbox" value="points" checked> Points (Pts)</label>
+                  </div>
+                </div>
+                <div class="dropdown-section">
+                  <h4>Custom Columns</h4>
+                  <div class="col-list" id="injector-toggle-leaderboard"></div>
+                </div>
+              </div>
+            </div>
+          </div>
           <table id="leaderboard">
             <thead>
               <tr>
@@ -95,16 +106,29 @@
               <option value="relegated">Relegated</option>
             </select>
             <button id="load-season">Load</button>
-            <div id="injector-toggle-season"></div>
-            <label class="switch-label">
-              <span>Switch to per match data</span>
-              <input type="checkbox" id="toggle-season-norm">
-              <span class="slider"></span>
-            </label>
+            
+            <div class="gear-menu-container" style="margin-left: auto;">
+              <button class="btn-icon" id="btn-gear-season">⚙️</button>
+              <div class="gear-dropdown hidden" id="gear-dropdown-season">
+                <div class="dropdown-section">
+                  <h4>Data View</h4>
+                  <label class="switch-label">
+                    <span>Per match data</span>
+                    <input type="checkbox" id="toggle-season-norm">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                <div class="dropdown-section">
+                  <h4>Custom Columns</h4>
+                  <div class="col-list" id="injector-toggle-season"></div>
+                </div>
+              </div>
+            </div>
           </div>
           <table id="season-table">
             <thead>
               <tr>
+                <th data-col="add" class="action-cell"></th>
                 <th data-col="position">Pos</th>
                 <th data-col="team_name_canonical">Team</th>
                 <th data-col="played">Pl</th>
@@ -115,7 +139,6 @@
                 <th data-col="goals_against">GA</th>
                 <th data-col="goal_diff">GD</th>
                 <th data-col="points" id="header-season-pts">Pts</th>
-                <th data-col="add">Add</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -152,28 +175,41 @@
         <select id="custom-team"></select>
         <button id="add-custom">Add</button>
         <button id="clear-custom" class="danger">Clear All</button>
-        <label class="switch-label">
-          <span>Switch to per match data</span>
-          <input type="checkbox" id="toggle-comparison-norm">
-          <span class="slider"></span>
-        </label>
+        
+        <div class="gear-menu-container" style="margin-left: auto;">
+          <button class="btn-icon" id="btn-gear-comparison">⚙️</button>
+          <div class="gear-dropdown hidden" id="gear-dropdown-comparison">
+            <div class="dropdown-section">
+              <h4>Data View</h4>
+              <label class="switch-label">
+                <span>Per match data</span>
+                <input type="checkbox" id="toggle-comparison-norm">
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="dropdown-section">
+              <h4>Custom Columns</h4>
+              <div class="col-list" id="injector-toggle-comparison"></div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="table-container">
         <table id="custom-comparison">
           <thead>
             <tr>
-              <th data-col="season_id">Season</th>
-              <th data-col="team_name_canonical">Team</th>
-              <th data-col="position">Pos</th>
-              <th data-col="played">Pl</th>
-              <th data-col="wins">W</th>
-              <th data-col="draws">D</th>
-              <th data-col="losses">L</th>
-              <th data-col="goals_for">GF</th>
-              <th data-col="goals_against">GA</th>
-              <th data-col="goal_diff">GD</th>
-              <th data-col="points" id="header-comparison-pts">Pts</th>
-              <th data-col="action">Action</th>
+              <th data-col="action" data-key="action" class="action-cell"></th>
+              <th data-col="season_id" data-key="season_id">Season</th>
+              <th data-col="team_name_canonical" data-key="team_name_canonical">Team</th>
+              <th data-col="position" data-key="position">Pos</th>
+              <th data-col="played" data-key="played">Pl</th>
+              <th data-col="wins" data-key="wins">W</th>
+              <th data-col="draws" data-key="draws">D</th>
+              <th data-col="losses" data-key="losses">L</th>
+              <th data-col="goals_for" data-key="goals_for">GF</th>
+              <th data-col="goals_against" data-key="goals_against">GA</th>
+              <th data-col="goal_diff" data-key="goal_diff">GD</th>
+              <th data-col="points" data-key="points" id="header-comparison-pts">Pts</th>
             </tr>
           </thead>
           <tbody></tbody>
