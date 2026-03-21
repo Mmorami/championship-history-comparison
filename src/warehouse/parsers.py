@@ -61,6 +61,11 @@ def parse_season_table_html(season_id: str, html: str) -> list[TeamSeasonRow]:
                 relegated=False,
             )
         )
+    # Re-calculate relegation based on final count (bottom 3)
+    total = len(rows)
+    for row in rows:
+        if row.position > (total - 3):
+            row.relegated = True
     return rows
 
 
@@ -146,7 +151,7 @@ def parse_football_data_csv_to_table(season_id: str, csv_text: str) -> list[Team
                 promoted_auto=(i <= 2),
                 promoted_playoff=(i == 3),
                 playoff_participant=(i in (3, 4, 5, 6)),
-                relegated=False,
+                relegated=(i > (len(ranked) - 3)),
                 quality_grade="A",
             )
         )
@@ -293,7 +298,7 @@ def parse_wikipedia_standings_html(season_id: str, html: str, section_marker: st
                 promoted_auto=(pos <= 2),
                 promoted_playoff=(pos == 3),
                 playoff_participant=(pos in (3, 4, 5, 6)),
-                relegated=(pos >= 21),
+                relegated=(pos > (len(parser.rows) - 4)),
                 quality_grade="B",
             )
         )
