@@ -2,6 +2,11 @@ let leaderboardData = [];
 let leaderboardSort = { key: "overall_score", dir: -1 }; // Default score descending
 let customComparison = [];
 
+window.leaderboardSort = leaderboardSort;
+window.renderLeaderboard = renderLeaderboard;
+window.loadLeaderboard = loadLeaderboard;
+window.loadSeasonCompare = loadSeasonCompare;
+
 // Normalization States
 let leaderboardNorm = false;
 let seasonNorm = false;
@@ -22,23 +27,30 @@ async function loadLeaderboard() {
   meta.textContent = `Run: ${data.metadata.run_id || "n/a"} | Cutoff: ${data.metadata.data_cutoff_utc || "n/a"}`;
 
   leaderboardData = data.rows || [];
-  renderLeaderboard();
-
-  // Attach sorting listeners to headers
-  const headers = document.querySelectorAll("#leaderboard thead th[data-key]");
-  headers.forEach(th => {
-    th.addEventListener("click", () => {
-      const key = th.getAttribute("data-key");
-      if (leaderboardSort.key === key) {
-        leaderboardSort.dir *= -1;
-      } else {
-        leaderboardSort.key = key;
-        leaderboardSort.dir = -1; // Default to DESC for most things
-      }
+  
+  if (window.ColumnInjector) {
+    window.ColumnInjector.applyToTable("leaderboard", leaderboardData, () => {
+      window.ColumnInjector.renderToggleUI("injector-toggle-leaderboard", "leaderboard", loadLeaderboard);
       renderLeaderboard();
     });
-  });
+  } else {
+    renderLeaderboard();
+  }
 }
+
+// Attach sorting listener using event delegation
+document.getElementById("leaderboard").addEventListener("click", (e) => {
+  const th = e.target.closest("th[data-key]");
+  if (!th) return;
+  const key = th.getAttribute("data-key");
+  if (leaderboardSort.key === key) {
+    leaderboardSort.dir *= -1;
+  } else {
+    leaderboardSort.key = key;
+    leaderboardSort.dir = -1;
+  }
+  renderLeaderboard();
+});
 
 function renderLeaderboard() {
   const tbody = document.querySelector("#leaderboard tbody");
@@ -64,6 +76,7 @@ function renderLeaderboard() {
     headers.forEach(th => {
       const key = th.getAttribute("data-key");
       const td = document.createElement("td");
+      td.setAttribute("data-col", key);
 
       if (key === "rank") {
         td.textContent = leaderboardData.indexOf(row) + 1;
@@ -137,44 +150,77 @@ async function updateCustomTeamDropdown() {
   });
 }
 
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  toast.style.opacity = "1";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 3000);
+}
+
 function addToCustomComparison(teamData) {
   const exists = customComparison.some(c => c.season_id === teamData.season_id && c.team_id === teamData.team_id);
-  if (exists) return;
+  if (exists) {
+    showToast(`${teamData.team_name_canonical} (${teamData.season_id}) is already in comparison.`);
+    return;
+  }
 
   customComparison.push(teamData);
   renderCustomComparison();
+  showToast(`Added ${teamData.team_name_canonical} (${teamData.season_id}) to bench!`);
 }
 
 function renderCustomComparison() {
-  const tbody = document.querySelector("#custom-comparison tbody");
-  tbody.innerHTML = "";
+  const finishRender = (augmentedData) => {
+    const tbody = document.querySelector("#custom-comparison tbody");
+    const headers = Array.from(document.querySelectorAll("#custom-comparison thead th"));
+    tbody.innerHTML = "";
 
-  document.getElementById("comparison-count").textContent = customComparison.length;
+    document.getElementById("comparison-count").textContent = augmentedData.length;
 
-  customComparison.forEach((row, idx) => {
-    const tr = document.createElement("tr");
-    const pl = row.played;
+    augmentedData.forEach((row, idx) => {
+      const tr = document.createElement("tr");
+      const pl = row.played;
+      const display = (val, type) => comparisonNorm ? getNormVal(val, pl, type) : val;
 
-    const display = (val, type) => comparisonNorm ? getNormVal(val, pl, type) : val;
+      headers.forEach(th => {
+        const td = document.createElement("td");
+        const key = th.getAttribute("data-key");
+        if (!key) return;
+        
+        td.setAttribute("data-col", key);
+        
+        if (key === "action") {
+          td.innerHTML = `<button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button>`;
+        } else if (key === "points") {
+          td.textContent = display(row.points, 'ppg');
+        } else if (["wins", "draws", "losses"].includes(key)) {
+          td.textContent = display(row[key], 'pct');
+        } else if (["goals_for", "goals_against", "goal_diff"].includes(key)) {
+          td.textContent = display(row[key], 'rate');
+        } else {
+          td.textContent = row[key] ?? "";
+        }
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
 
-    tr.innerHTML = `
-      <td>${row.season_id}</td>
-      <td>${row.team_name_canonical}</td>
-      <td>${row.position}</td>
-      <td>${pl}</td>
-      <td>${display(row.wins, 'pct')}</td>
-      <td>${display(row.draws, 'pct')}</td>
-      <td>${display(row.losses, 'pct')}</td>
-      <td>${display(row.goals_for, 'rate')}</td>
-      <td>${display(row.goals_against, 'rate')}</td>
-      <td>${display(row.goal_diff, 'rate')}</td>
-      <td>${display(row.points, 'ppg')}</td>
-      <td><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
-    `;
-    tbody.appendChild(tr);
-  });
+    document.getElementById("header-comparison-pts").textContent = comparisonNorm ? "PPG" : "Pts";
+  };
 
-  document.getElementById("header-comparison-pts").textContent = comparisonNorm ? "PPG" : "Pts";
+  if (window.ColumnInjector) {
+    window.ColumnInjector.applyToTable("custom-comparison", customComparison, () => {
+      window.ColumnInjector.renderToggleUI("injector-toggle-comparison", "custom-comparison", renderCustomComparison);
+      finishRender(customComparison);
+    });
+  } else {
+    finishRender(customComparison);
+  }
 }
 
 window.removeFromCustomComparison = function (idx) {
@@ -239,11 +285,15 @@ async function loadSeasonCompare() {
   const slice = document.getElementById("slice").value;
   const res = await fetch(`/api/season/${season}/compare?slice=${slice}`);
   const data = await res.json();
-  const tbody = document.querySelector("#season-table tbody");
-  const headers = Array.from(document.querySelectorAll("#season-table thead th"));
-  tbody.innerHTML = "";
+  
+  let seasonData = data.rows || [];
+  
+  const finishRender = (augmentedData) => {
+    const tbody = document.querySelector("#season-table tbody");
+    const headers = Array.from(document.querySelectorAll("#season-table thead th"));
+    tbody.innerHTML = "";
 
-  data.rows.forEach((row) => {
+    augmentedData.forEach((row) => {
     const tr = document.createElement("tr");
     tr.style.cursor = "pointer";
     tr.addEventListener("click", (e) => {
@@ -252,8 +302,11 @@ async function loadSeasonCompare() {
 
     headers.forEach((th) => {
       const td = document.createElement("td");
+      const dataCol = th.getAttribute("data-col");
       const text = th.textContent.toLowerCase();
-      if (text === "add") {
+      
+      if (dataCol === "add") {
+        td.setAttribute("data-col", "add");
         const btn = document.createElement("button");
         btn.textContent = "+";
         btn.className = "add-btn";
@@ -275,7 +328,9 @@ async function loadSeasonCompare() {
           pts: "points",
           gd: "goal_diff",
         };
-        const key = map[text] || text;
+        const dataKey = th.getAttribute("data-key");
+        const key = dataKey || map[text] || text;
+        td.setAttribute("data-col", key);
         let val = row[key] ?? "";
 
         if (seasonNorm && ["wins", "draws", "losses", "goals_for", "goals_against", "goal_diff", "points"].includes(key)) {
@@ -291,6 +346,16 @@ async function loadSeasonCompare() {
   });
 
   document.getElementById("header-season-pts").textContent = seasonNorm ? "PPG" : "Pts";
+  };
+  
+  if (window.ColumnInjector) {
+    window.ColumnInjector.applyToTable("season-table", seasonData, () => {
+      window.ColumnInjector.renderToggleUI("injector-toggle-season", "season-table", loadSeasonCompare);
+      finishRender(seasonData);
+    });
+  } else {
+    finishRender(seasonData);
+  }
 }
 
 document.getElementById("load-season").addEventListener("click", loadSeasonCompare);
@@ -345,6 +410,41 @@ document.getElementById("toggle-season-norm").addEventListener("change", (e) => 
 document.getElementById("toggle-comparison-norm").addEventListener("change", (e) => {
   comparisonNorm = e.target.checked;
   renderCustomComparison();
+});
+
+// Gear Menu Logic
+document.querySelectorAll(".gear-menu-container").forEach(container => {
+  const btn = container.querySelector(".btn-icon");
+  const dropdown = container.querySelector(".gear-dropdown");
+  
+  if (btn && dropdown) {
+    btn.addEventListener("click", () => {
+      // close others
+      document.querySelectorAll(".gear-dropdown").forEach(d => {
+        if (d !== dropdown) d.classList.add("hidden");
+      });
+      dropdown.classList.toggle("hidden");
+    });
+    
+    document.addEventListener("click", (e) => {
+      if (!container.contains(e.target)) {
+        dropdown.classList.add("hidden");
+      }
+    });
+  }
+});
+
+// Column Visibility Logic
+const colListControls = document.querySelectorAll("#col-dropdown input[type='checkbox']");
+colListControls.forEach(checkbox => {
+  checkbox.addEventListener("change", (e) => {
+    const colKey = e.target.value;
+    if (e.target.checked) {
+      document.body.classList.remove(`hide-${colKey}`);
+    } else {
+      document.body.classList.add(`hide-${colKey}`);
+    }
+  });
 });
 
 loadLeaderboard();

@@ -437,7 +437,316 @@ input:checked+.slider::before {
   box-shadow: 0 0 8px rgba(79, 70, 229, 0.3);
 }
 
+/* Toast Notification */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: var(--panel-bg);
+  border: 1px solid var(--accent);
+  color: var(--text-primary);
+  padding: 12px 24px;
+  border-radius: 8px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+  z-index: 1000;
+  animation: slideIn 0.3s ease-out;
+  transition: opacity 0.3s;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Column Visibility Controls */
+.col-visibility-container {
+  position: relative;
+  display: inline-block;
+  margin-right: 16px;
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+}
+
+.col-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px;
+  min-width: 200px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: slideIn 0.2s ease-out;
+}
+
+.col-dropdown label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.col-dropdown label:hover {
+  color: var(--text-primary);
+}
+
+.col-dropdown input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 14px;
+  height: 14px;
+}
+
+/* Hide Column Utility Classes on Body */
+body.hide-played [data-col="played"],
+body.hide-wins [data-col="wins"],
+body.hide-draws [data-col="draws"],
+body.hide-losses [data-col="losses"],
+body.hide-goals_for [data-col="goals_for"],
+body.hide-goals_against [data-col="goals_against"],
+body.hide-goal_diff [data-col="goal_diff"],
+body.hide-points [data-col="points"] {
+  display: none !important;
+}
+
 /* Utility */
 .hidden {
   display: none !important;
+}
+
+/* Column Studio Layout */
+.studio-layout {
+  display: flex;
+  gap: 24px;
+}
+.studio-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.chat-panel {
+  flex: 2;
+  height: calc(100vh - 160px);
+}
+.saved-columns-panel {
+  flex: 1;
+  height: calc(100vh - 160px);
+  padding: 24px;
+  overflow-y: auto;
+}
+.saved-columns-panel h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+.chat-history {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.chat-input-container {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+}
+.chat-input-container input {
+  flex: 1;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.chat-input-container input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.message-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  line-height: 1.5;
+}
+.message-bubble.user {
+  background: var(--accent);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.message-bubble.bot {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.sql-code {
+  background: var(--bg-dark);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin: 12px 0;
+}
+.preview-status {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.bubble-actions {
+  margin-top: 12px;
+}
+.saved-column-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.saved-column-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.05rem;
+}
+.saved-column-card p {
+  margin: 0 0 12px 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+.empty-state {
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+  margin-top: 40px;
+}
+
+/* Gear Menu Styles */
+.gear-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.btn-icon {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-icon:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+}
+
+.gear-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0;
+  min-width: 240px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  animation: slideIn 0.2s ease-out;
+}
+
+.dropdown-section {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.dropdown-section:last-child {
+  border-bottom: none;
+}
+
+.dropdown-section h4 {
+  margin: 0 0 12px 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.col-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.col-list label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.col-list label:hover {
+  color: var(--text-primary);
+}
+
+.col-list input[type="checkbox"] {
+  accent-color: var(--accent);
+  width: 14px;
+  height: 14px;
+}
+
+.action-cell {
+  width: 40px;
+  text-align: center;
 }

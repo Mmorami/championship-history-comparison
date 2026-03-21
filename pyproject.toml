@@ -5,6 +5,9 @@ description = "Data warehouse and collector for English second-tier football his
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "anthropic",
+    "groq",
+    "python-dotenv",
 ]
 
 [project.optional-dependencies]
