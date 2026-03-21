@@ -6,6 +6,10 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
+import anthropic
+import groq
+
+from warehouse.config import get_settings
 
 def _json_response(handler: BaseHTTPRequestHandler, payload: dict, status: int = 200) -> None:
     body = json.dumps(payload).encode("utf-8")
@@ -44,6 +48,25 @@ class WarehouseApiHandler(BaseHTTPRequestHandler):
 
         if path == "/app.js":
             content = _read_text(self.web_root / "app.js")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/javascript; charset=utf-8")
+            self.send_header("Content-Length", str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+            return
+
+        if path == "/column-studio":
+            content = _read_text(self.web_root / "column-studio.html")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(content)))
+            self.end_headers()
+            self.wfile.write(content)
+            return
+
+        if path in ("/column_studio.js", "/column_injector.js"):
+            filename = path.lstrip("/")
+            content = _read_text(self.web_root / filename)
             self.send_response(200)
             self.send_header("Content-Type", "application/javascript; charset=utf-8")
             self.send_header("Content-Length", str(len(content)))
@@ -164,6 +187,99 @@ class WarehouseApiHandler(BaseHTTPRequestHandler):
                     params,
                 ).fetchall()
             _json_response(self, {"season_id": season_id, "slice": slice_name, "rows": [dict(r) for r in rows]})
+            return
+
+        _json_response(self, {"error": "not_found"}, status=404)
+
+    def do_POST(self) -> None:  # noqa: N802
+        parsed = urlparse(self.path)
+        path = parsed.path
+
+        content_length = int(self.headers.get("Content-Length", 0))
+        if content_length > 0:
+            body = self.rfile.read(content_length).decode("utf-8")
+            try:
+                payload = json.loads(body)
+            except json.JSONDecodeError:
+                _json_response(self, {"error": "invalid_json"}, status=400)
+                return
+        else:
+            payload = {}
+
+        if path == "/api/column/generate":
+            prompt = payload.get("prompt", "")
+            with self._conn() as conn:
+                schema_rows = conn.execute("SELECT sql FROM sqlite_master WHERE type='table';").fetchall()
+                schema_sql = "\\n\\n".join(r["sql"] for r in schema_rows if r["sql"])
+
+            settings = get_settings()
+            
+            # System prompt is shared between providers
+            system_prompt = f"""You are a SQLite data warehouse expert creating custom metrics.
+Here is the current database schema:
+```sql
+{schema_sql}
+```
+The user will provide a metric description. You must generate a SQLite SELECT query that computes this metric.
+The query MUST return identifier columns (e.g., `team_id` and/or `season_id`) and a computed column named EXACTLY `value`.
+You must return only a valid JSON response matching this exact structure, with no formatting outside the JSON:
+{{
+  "name": "Short, human-readable column name",
+  "description": "Short explanation of calculation",
+  "sql": "The raw SQLite SELECT query."
+}}"""
+
+            try:
+                if settings.llm_provider == "groq" or (not settings.anthropic_api_key and settings.groq_api_key):
+                    if not settings.groq_api_key:
+                        _json_response(self, {"error": "GROQ_API_KEY not configured"}, status=500)
+                        return
+                    client = groq.Groq(api_key=settings.groq_api_key)
+                    response = client.chat.completions.create(
+                        model="llama-3.3-70b-versatile",
+                        messages=[
+                            {"role": "system", "content": system_prompt},
+                            {"role": "user", "content": prompt}
+                        ],
+                        response_format={"type": "json_object"}
+                    )
+                    text = response.choices[0].message.content
+                else:
+                    if not settings.anthropic_api_key:
+                        _json_response(self, {"error": "ANTHROPIC_API_KEY not configured"}, status=500)
+                        return
+                    client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
+                    response = client.messages.create(
+                        model="claude-3-7-sonnet-20250219",
+                        max_tokens=1000,
+                        system=system_prompt,
+                        messages=[{"role": "user", "content": prompt}]
+                    )
+                    text = response.content[0].text
+                
+                if text.startswith("```json"): text = text[7:]
+                if text.startswith("```"): text = text[3:]
+                if text.endswith("```"): text = text[:-3]
+                parsed_json = json.loads(text.strip())
+                _json_response(self, parsed_json)
+            except Exception as e:
+                _json_response(self, {"error": str(e)}, status=500)
+            return
+
+        if path == "/api/column/preview":
+            sql = payload.get("sql", "").strip()
+            upper_sql = sql.upper()
+            forbidden = ["INSERT ", "UPDATE ", "DELETE ", "DROP ", "ALTER ", "CREATE ", "REPLACE ", "PRAGMA "]
+            if any(f in upper_sql for f in forbidden):
+                _json_response(self, {"error": "SQL execution error: Only SELECT statements are allowed."}, status=400)
+                return
+
+            try:
+                with self._conn() as conn:
+                    rows = conn.execute(sql).fetchall()
+                    _json_response(self, {"rows": [dict(r) for r in rows], "count": len(rows)})
+            except Exception as e:
+                _json_response(self, {"error": f"SQL Error: {str(e)}"}, status=400)
             return
 
         _json_response(self, {"error": "not_found"}, status=404)

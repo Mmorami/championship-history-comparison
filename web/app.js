@@ -2,6 +2,11 @@ let leaderboardData = [];
 let leaderboardSort = { key: "overall_score", dir: -1 }; // Default score descending
 let customComparison = [];
 
+window.leaderboardSort = leaderboardSort;
+window.renderLeaderboard = renderLeaderboard;
+window.loadLeaderboard = loadLeaderboard;
+window.loadSeasonCompare = loadSeasonCompare;
+
 // Normalization States
 let leaderboardNorm = false;
 let seasonNorm = false;
@@ -22,23 +27,30 @@ async function loadLeaderboard() {
   meta.textContent = `Run: ${data.metadata.run_id || "n/a"} | Cutoff: ${data.metadata.data_cutoff_utc || "n/a"}`;
 
   leaderboardData = data.rows || [];
-  renderLeaderboard();
-
-  // Attach sorting listeners to headers
-  const headers = document.querySelectorAll("#leaderboard thead th[data-key]");
-  headers.forEach(th => {
-    th.addEventListener("click", () => {
-      const key = th.getAttribute("data-key");
-      if (leaderboardSort.key === key) {
-        leaderboardSort.dir *= -1;
-      } else {
-        leaderboardSort.key = key;
-        leaderboardSort.dir = -1; // Default to DESC for most things
-      }
+  
+  if (window.ColumnInjector) {
+    window.ColumnInjector.applyToTable("leaderboard", leaderboardData, () => {
+      window.ColumnInjector.renderToggleUI("injector-toggle-leaderboard", "leaderboard", loadLeaderboard);
       renderLeaderboard();
     });
-  });
+  } else {
+    renderLeaderboard();
+  }
 }
+
+// Attach sorting listener using event delegation
+document.getElementById("leaderboard").addEventListener("click", (e) => {
+  const th = e.target.closest("th[data-key]");
+  if (!th) return;
+  const key = th.getAttribute("data-key");
+  if (leaderboardSort.key === key) {
+    leaderboardSort.dir *= -1;
+  } else {
+    leaderboardSort.key = key;
+    leaderboardSort.dir = -1;
+  }
+  renderLeaderboard();
+});
 
 function renderLeaderboard() {
   const tbody = document.querySelector("#leaderboard tbody");
@@ -256,11 +268,15 @@ async function loadSeasonCompare() {
   const slice = document.getElementById("slice").value;
   const res = await fetch(`/api/season/${season}/compare?slice=${slice}`);
   const data = await res.json();
-  const tbody = document.querySelector("#season-table tbody");
-  const headers = Array.from(document.querySelectorAll("#season-table thead th"));
-  tbody.innerHTML = "";
+  
+  let seasonData = data.rows || [];
+  
+  const finishRender = (augmentedData) => {
+    const tbody = document.querySelector("#season-table tbody");
+    const headers = Array.from(document.querySelectorAll("#season-table thead th"));
+    tbody.innerHTML = "";
 
-  data.rows.forEach((row) => {
+    augmentedData.forEach((row) => {
     const tr = document.createElement("tr");
     tr.style.cursor = "pointer";
     tr.addEventListener("click", (e) => {
@@ -310,6 +326,16 @@ async function loadSeasonCompare() {
   });
 
   document.getElementById("header-season-pts").textContent = seasonNorm ? "PPG" : "Pts";
+  };
+  
+  if (window.ColumnInjector) {
+    window.ColumnInjector.applyToTable("season-table", seasonData, () => {
+      window.ColumnInjector.renderToggleUI("injector-toggle-season", "season-table", loadSeasonCompare);
+      finishRender(seasonData);
+    });
+  } else {
+    finishRender(seasonData);
+  }
 }
 
 document.getElementById("load-season").addEventListener("click", loadSeasonCompare);

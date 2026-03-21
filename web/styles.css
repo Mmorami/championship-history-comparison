@@ -546,3 +546,115 @@ body.hide-points [data-col="points"] {
 .hidden {
   display: none !important;
 }
+
+/* Column Studio Layout */
+.studio-layout {
+  display: flex;
+  gap: 24px;
+}
+.studio-panel {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.chat-panel {
+  flex: 2;
+  height: calc(100vh - 160px);
+}
+.saved-columns-panel {
+  flex: 1;
+  height: calc(100vh - 160px);
+  padding: 24px;
+  overflow-y: auto;
+}
+.saved-columns-panel h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+.chat-history {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.chat-input-container {
+  padding: 16px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 12px;
+}
+.chat-input-container input {
+  flex: 1;
+  background: var(--bg-dark);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+.chat-input-container input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.message-bubble {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 12px;
+  line-height: 1.5;
+}
+.message-bubble.user {
+  background: var(--accent);
+  color: white;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+.message-bubble.bot {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+.sql-code {
+  background: var(--bg-dark);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: monospace;
+  font-size: 0.9rem;
+  margin: 12px 0;
+}
+.preview-status {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+.bubble-actions {
+  margin-top: 12px;
+}
+.saved-column-card {
+  background: var(--panel-bg);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+}
+.saved-column-card h3 {
+  margin: 0 0 8px 0;
+  font-size: 1.05rem;
+}
+.saved-column-card p {
+  margin: 0 0 12px 0;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+.empty-state {
+  color: var(--text-secondary);
+  text-align: center;
+  font-style: italic;
+  margin-top: 40px;
+}

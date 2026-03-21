@@ -19,6 +19,7 @@
       <ul class="nav-links">
         <li class="nav-item active" data-target="view-leaderboard">Dashboard</li>
         <li class="nav-item" data-target="view-season">Season Explorer</li>
+        <li class="nav-item" onclick="window.location.href='/column-studio'">Column Studio</li>
       </ul>
       <div class="sidebar-bottom">
         <button id="toggle-comparison" class="btn-comparison">
@@ -35,6 +36,7 @@
           <p id="meta"></p>
         </div>
         <div class="header-controls">
+          <div id="injector-toggle-leaderboard"></div>
           <div class="col-visibility-container">
             <button id="btn-col-visibility" class="btn-outline">Columns ▾</button>
             <div id="col-dropdown" class="col-dropdown hidden">
@@ -93,6 +95,7 @@
               <option value="relegated">Relegated</option>
             </select>
             <button id="load-season">Load</button>
+            <div id="injector-toggle-season"></div>
             <label class="switch-label">
               <span>Switch to per match data</span>
               <input type="checkbox" id="toggle-season-norm">
@@ -181,6 +184,7 @@
 
   <div id="toast" class="toast hidden"></div>
 
+  <script src="/column_injector.js"></script>
   <script src="/app.js"></script>
 </body>
 

@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Column Studio - Championship History Dashboard</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <div class="dashboard-layout">
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="brand">
+        <span class="brand-icon">C-H</span>
+        <span class="brand-text">CHAMPIONSHIP HISTORY</span>
+      </div>
+      <ul class="nav-links">
+        <li class="nav-item" onclick="window.location.href='/'">Dashboard</li>
+        <li class="nav-item" onclick="window.location.href='/'">Season Explorer</li>
+        <li class="nav-item active" onclick="window.location.href='/column-studio'">Column Studio</li>
+      </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="sticky-header">
+        <div class="header-titles">
+          <h1>Column Studio</h1>
+          <p id="meta">Create custom metrics using natural language</p>
+        </div>
+      </header>
+      
+      <div class="views-container studio-layout">
+        <!-- Chat Panel -->
+        <div class="studio-panel chat-panel">
+          <div id="chat-history" class="chat-history">
+            <div class="message-bubble bot">
+              Hi! Describe the column you want to create. For example: "average goals scored in last 3 away games per team at match date"
+            </div>
+          </div>
+          <div class="chat-input-container">
+            <input type="text" id="chat-input" placeholder="Describe your metric..." autocomplete="off" />
+            <button id="chat-send">Generate</button>
+          </div>
+        </div>
+
+        <!-- Saved Columns Panel -->
+        <div class="studio-panel saved-columns-panel">
+          <h2>Your Custom Columns</h2>
+          <div id="saved-columns-list" class="saved-columns-list">
+            <!-- Populated via JS -->
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <div id="toast" class="toast hidden"></div>
+  <script src="/column_studio.js"></script>
+</body>
+</html>
