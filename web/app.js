@@ -64,6 +64,7 @@ function renderLeaderboard() {
     headers.forEach(th => {
       const key = th.getAttribute("data-key");
       const td = document.createElement("td");
+      td.setAttribute("data-col", key);
 
       if (key === "rank") {
         td.textContent = leaderboardData.indexOf(row) + 1;
@@ -174,18 +175,18 @@ function renderCustomComparison() {
     const display = (val, type) => comparisonNorm ? getNormVal(val, pl, type) : val;
 
     tr.innerHTML = `
-      <td>${row.season_id}</td>
-      <td>${row.team_name_canonical}</td>
-      <td>${row.position}</td>
-      <td>${pl}</td>
-      <td>${display(row.wins, 'pct')}</td>
-      <td>${display(row.draws, 'pct')}</td>
-      <td>${display(row.losses, 'pct')}</td>
-      <td>${display(row.goals_for, 'rate')}</td>
-      <td>${display(row.goals_against, 'rate')}</td>
-      <td>${display(row.goal_diff, 'rate')}</td>
-      <td>${display(row.points, 'ppg')}</td>
-      <td><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
+      <td data-col="season_id">${row.season_id}</td>
+      <td data-col="team_name_canonical">${row.team_name_canonical}</td>
+      <td data-col="position">${row.position}</td>
+      <td data-col="played">${pl}</td>
+      <td data-col="wins">${display(row.wins, 'pct')}</td>
+      <td data-col="draws">${display(row.draws, 'pct')}</td>
+      <td data-col="losses">${display(row.losses, 'pct')}</td>
+      <td data-col="goals_for">${display(row.goals_for, 'rate')}</td>
+      <td data-col="goals_against">${display(row.goals_against, 'rate')}</td>
+      <td data-col="goal_diff">${display(row.goal_diff, 'rate')}</td>
+      <td data-col="points">${display(row.points, 'ppg')}</td>
+      <td data-col="action"><button class="danger-small" onclick="removeFromCustomComparison(${idx})">Remove</button></td>
     `;
     tbody.appendChild(tr);
   });
@@ -270,6 +271,7 @@ async function loadSeasonCompare() {
       const td = document.createElement("td");
       const text = th.textContent.toLowerCase();
       if (text === "add") {
+        td.setAttribute("data-col", "add");
         const btn = document.createElement("button");
         btn.textContent = "+";
         btn.className = "add-btn";
@@ -292,6 +294,7 @@ async function loadSeasonCompare() {
           gd: "goal_diff",
         };
         const key = map[text] || text;
+        td.setAttribute("data-col", key);
         let val = row[key] ?? "";
 
         if (seasonNorm && ["wins", "draws", "losses", "goals_for", "goals_against", "goal_diff", "points"].includes(key)) {
@@ -362,6 +365,33 @@ document.getElementById("toggle-comparison-norm").addEventListener("change", (e)
   comparisonNorm = e.target.checked;
   renderCustomComparison();
 });
+
+// Column Visibility Logic
+const btnColVis = document.getElementById("btn-col-visibility");
+const colDropdown = document.getElementById("col-dropdown");
+
+if (btnColVis && colDropdown) {
+  btnColVis.addEventListener("click", () => {
+    colDropdown.classList.toggle("hidden");
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!btnColVis.contains(e.target) && !colDropdown.contains(e.target)) {
+      colDropdown.classList.add("hidden");
+    }
+  });
+
+  colDropdown.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+    checkbox.addEventListener("change", (e) => {
+      const colKey = e.target.value;
+      if (e.target.checked) {
+        document.body.classList.remove(`hide-${colKey}`);
+      } else {
+        document.body.classList.add(`hide-${colKey}`);
+      }
+    });
+  });
+}
 
 loadLeaderboard();
 populateSeasonsDropdown().then(loadSeasonCompare);

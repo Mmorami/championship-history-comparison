@@ -35,6 +35,19 @@
           <p id="meta"></p>
         </div>
         <div class="header-controls">
+          <div class="col-visibility-container">
+            <button id="btn-col-visibility" class="btn-outline">Columns ▾</button>
+            <div id="col-dropdown" class="col-dropdown hidden">
+              <label><input type="checkbox" value="played" checked> Played (Pl)</label>
+              <label><input type="checkbox" value="wins" checked> Wins (W)</label>
+              <label><input type="checkbox" value="draws" checked> Draws (D)</label>
+              <label><input type="checkbox" value="losses" checked> Losses (L)</label>
+              <label><input type="checkbox" value="goals_for" checked> Goals For (GF)</label>
+              <label><input type="checkbox" value="goals_against" checked> Goals Against (GA)</label>
+              <label><input type="checkbox" value="goal_diff" checked> Goal Diff (GD)</label>
+              <label><input type="checkbox" value="points" checked> Points (Pts)</label>
+            </div>
+          </div>
           <label class="switch-label">
             <span>Switch to per match data</span>
             <input type="checkbox" id="toggle-leaderboard-norm">
@@ -49,18 +62,18 @@
           <table id="leaderboard">
             <thead>
               <tr>
-                <th data-key="rank">#</th>
-                <th data-key="season_id">Season</th>
-                <th data-key="team_name_canonical">Team</th>
-                <th data-key="position">Pos</th>
-                <th data-key="played">Pl</th>
-                <th data-key="wins">W</th>
-                <th data-key="draws">D</th>
-                <th data-key="losses">L</th>
-                <th data-key="goals_for">GF</th>
-                <th data-key="goals_against">GA</th>
-                <th data-key="goal_diff">GD</th>
-                <th data-key="points" id="header-leaderboard-pts">Pts</th>
+                <th data-col="rank" data-key="rank">#</th>
+                <th data-col="season_id" data-key="season_id">Season</th>
+                <th data-col="team_name_canonical" data-key="team_name_canonical">Team</th>
+                <th data-col="position" data-key="position">Pos</th>
+                <th data-col="played" data-key="played">Pl</th>
+                <th data-col="wins" data-key="wins">W</th>
+                <th data-col="draws" data-key="draws">D</th>
+                <th data-col="losses" data-key="losses">L</th>
+                <th data-col="goals_for" data-key="goals_for">GF</th>
+                <th data-col="goals_against" data-key="goals_against">GA</th>
+                <th data-col="goal_diff" data-key="goal_diff">GD</th>
+                <th data-col="points" data-key="points" id="header-leaderboard-pts">Pts</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -89,17 +102,17 @@
           <table id="season-table">
             <thead>
               <tr>
-                <th>Pos</th>
-                <th>Team</th>
-                <th>Pl</th>
-                <th>W</th>
-                <th>D</th>
-                <th>L</th>
-                <th>GF</th>
-                <th>GA</th>
-                <th>GD</th>
-                <th id="header-season-pts">Pts</th>
-                <th>Add</th>
+                <th data-col="position">Pos</th>
+                <th data-col="team_name_canonical">Team</th>
+                <th data-col="played">Pl</th>
+                <th data-col="wins">W</th>
+                <th data-col="draws">D</th>
+                <th data-col="losses">L</th>
+                <th data-col="goals_for">GF</th>
+                <th data-col="goals_against">GA</th>
+                <th data-col="goal_diff">GD</th>
+                <th data-col="points" id="header-season-pts">Pts</th>
+                <th data-col="add">Add</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -146,18 +159,18 @@
         <table id="custom-comparison">
           <thead>
             <tr>
-              <th>Season</th>
-              <th>Team</th>
-              <th>Pos</th>
-              <th>Pl</th>
-              <th>W</th>
-              <th>D</th>
-              <th>L</th>
-              <th>GF</th>
-              <th>GA</th>
-              <th>GD</th>
-              <th id="header-comparison-pts">Pts</th>
-              <th>Action</th>
+              <th data-col="season_id">Season</th>
+              <th data-col="team_name_canonical">Team</th>
+              <th data-col="position">Pos</th>
+              <th data-col="played">Pl</th>
+              <th data-col="wins">W</th>
+              <th data-col="draws">D</th>
+              <th data-col="losses">L</th>
+              <th data-col="goals_for">GF</th>
+              <th data-col="goals_against">GA</th>
+              <th data-col="goal_diff">GD</th>
+              <th data-col="points" id="header-comparison-pts">Pts</th>
+              <th data-col="action">Action</th>
             </tr>
           </thead>
           <tbody></tbody>
