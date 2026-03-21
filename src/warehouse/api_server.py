@@ -85,7 +85,7 @@ class WarehouseApiHandler(BaseHTTPRequestHandler):
                     SELECT t.team_name_canonical, s.*
                     FROM team_ranking_snapshot s
                     JOIN teams t ON t.team_id = s.team_id
-                    WHERE s.run_id = ?
+                    WHERE s.run_id = ? AND (s.promoted_auto = 1 OR s.promoted_playoff = 1)
                     ORDER BY s.overall_score DESC
                     LIMIT 100;
                     """,
@@ -150,6 +150,8 @@ class WarehouseApiHandler(BaseHTTPRequestHandler):
                 where += " AND s.top6_flag = 1"
             elif slice_name == "promoted":
                 where += " AND (s.promoted_auto = 1 OR s.promoted_playoff = 1)"
+            elif slice_name == "relegated":
+                where += " AND s.relegated = 1"
             with self._conn() as conn:
                 rows = conn.execute(
                     f"""

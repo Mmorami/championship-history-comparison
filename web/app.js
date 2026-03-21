@@ -137,12 +137,28 @@ async function updateCustomTeamDropdown() {
   });
 }
 
+function showToast(message) {
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.classList.remove("hidden");
+  toast.style.opacity = "1";
+
+  setTimeout(() => {
+    toast.style.opacity = "0";
+    setTimeout(() => toast.classList.add("hidden"), 300);
+  }, 3000);
+}
+
 function addToCustomComparison(teamData) {
   const exists = customComparison.some(c => c.season_id === teamData.season_id && c.team_id === teamData.team_id);
-  if (exists) return;
+  if (exists) {
+    showToast(`${teamData.team_name_canonical} (${teamData.season_id}) is already in comparison.`);
+    return;
+  }
 
   customComparison.push(teamData);
   renderCustomComparison();
+  showToast(`Added ${teamData.team_name_canonical} (${teamData.season_id}) to bench!`);
 }
 
 function renderCustomComparison() {
